@@ -18,7 +18,6 @@ resource "aws_iam_user" "iam_user" {
     email        = var.email
     name         = var.name
     purpose      = var.purpose
-    module_url   = "https://gitlab.ci.mcf.sh/wsg/ops-aws/tree/master/modules/iam-user-gcc"
   }
 }
 

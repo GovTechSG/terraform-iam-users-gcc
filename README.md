@@ -89,6 +89,8 @@ To access roles you are granted, you'll need to assume an IAM Role. IAM Roles wh
     aws iam enable-mfa-device --user-name ${AWS_USER} --serial-number ${MFA_SERIAL} --authentication-code1 000000 --authentication-code2 111111
     ```
 
+*Note* `MFA_SERIAL` is arn:aws:iam::${ACCOUNT_ID}:mfa/${AWS_USER}
+
 ### Configuring AWS to assume roles
 
 In order to indicate to AWS to assume certain roles, we'll need to configure it so via the `role_arn` property.
