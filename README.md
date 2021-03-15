@@ -116,7 +116,7 @@ The created `-temp` profile should be used, meaning you run `export AWS_PROFILE=
 #!/bin/bash
 # auth.sh
 
-set -eu
+set -e
 if [ -z "$1" ]; then
   echo "Need MFA..."
   exit 1;
@@ -144,7 +144,7 @@ function assrole() {
     exit 1;
   fi
 
-  if [ -z "$IAM_ROLE" ]e then
+  if [ -z "$IAM_ROLE" ] then
     echo "Need IAM_ROLE shell environment variable, which is the role name your are trying to assume, e.g developer, great-power"
     exit 1;
   fi
@@ -209,8 +209,8 @@ We also implement a mandatory multi-factor authentication (2FA) for role assumpt
     source_profile = ${PROFILE}
     role_arn = ${ROLE_ARN}
     mfa_serial = ${MFA_SERIAL}
-    ```    
-    
+    ```
+
 ## Requirements
 
 No requirements.
