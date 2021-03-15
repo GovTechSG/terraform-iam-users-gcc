@@ -208,7 +208,10 @@ We also implement a mandatory multi-factor authentication (2FA) for role assumpt
     [profile ${AWS_USER}]
     source_profile = ${PROFILE}
     role_arn = ${ROLE_ARN}
-    mfa_serial = ${MFA_SERIAL}## Requirements
+    mfa_serial = ${MFA_SERIAL}
+    ```    
+    
+## Requirements
 
 No requirements.
 
