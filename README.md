@@ -130,7 +130,7 @@ function assrole() {
   MFA=$5
 
   if [ -z "$PROFILE_NAME" ]; then
-    echo "Need AWS_PROFILE shell environment variable"
+    echo "Need AWS_PROFILE_CLI shell environment variable"
     exit 1;
   fi
 
