@@ -195,7 +195,7 @@ aws_session_token = xxxSOME_VALUE
 ```
 
 After this just run your command such as below to verify it works
-> `AWS_PROFILE=xxx-temp aws s3 ls`
+> `AWS_PROFILE=xxx-temp aws s3 ls s3://${YOUR_BUCKET_NAME}`
 
 #### Advanced Method
 
