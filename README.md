@@ -27,6 +27,8 @@ module 'iam-user-gcc' {
 
 This module assumes you, and the users that you are helping to create access tokens for have knowledge of aws cli, otherwise please read [aws cli docs](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html) prior to this so as to familiarise yourself with the various commands
 
+For simplifying the shell script we use `jq`, therefore please install [jq](https://github.com/stedolan/jq/wiki/Installation)
+
 ## Access token
 ### Generating your GPG key
 
