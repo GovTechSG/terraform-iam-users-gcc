@@ -4,10 +4,10 @@
 # this module assists in creating an iam user for gcc
 #
 
-# ref: https://www.terraform.io/docs/providers/aws/d/caller_identity.html
+# ref https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity
 data "aws_caller_identity" "current" {}
 
-# ref https://www.terraform.io/docs/providers/aws/r/iam_user.html
+# ref https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user
 resource "aws_iam_user" "iam_user" {
   name                 = var.username
   force_destroy        = true
@@ -21,7 +21,7 @@ resource "aws_iam_user" "iam_user" {
   }
 }
 
-# ref https://www.terraform.io/docs/providers/aws/r/iam_access_key.html
+# ref https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_access_key
 resource "aws_iam_access_key" "iam_user" {
   user    = aws_iam_user.iam_user.name
   pgp_key = var.pgp_key
