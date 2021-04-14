@@ -11,7 +11,7 @@ data "aws_caller_identity" "current" {}
 resource "aws_iam_user" "iam_user" {
   name                 = var.username
   force_destroy        = true
-  permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/GCCIAccountBoundary"
+  permissions_boundary  = var.enable_gcci_boundary ? "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/GCCIAccountBoundary" : ""
 
   tags = {
     applied_with = "terraform"

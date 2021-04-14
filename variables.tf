@@ -36,3 +36,9 @@ variable "status" {
   type        = string
   default     = "Active"
 }
+
+variable "enable_gcci_boundary" {
+  description = "toggle for gcci boundary to allow non-gcc accounts to create role"
+  type        = bool
+  default     = true
+}
