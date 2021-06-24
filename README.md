@@ -109,49 +109,8 @@ role_arn=arn:aws:iam::{ACCOUNTID}}:role/role-to-assume
 source_profile=my-username
 ```
 
-<<<<<<< HEAD
 2. run `aws-vault exec my-role` and type in your 2fa when requested
 3. Check that you have assumed the role correctly by testing `aws` commands that is allowed with your role.
-=======
-#### Before and after of script and what it does to `~/.aws/credentials`
-
-```ini
-#BEFORE
-[${PROFILE}]
-aws_access_key_id = ${ACCESS_KEY_ID}
-aws_secret_access_key = ${SECRET_ACCESS_KEY} #disclaimer: PLEASE DO NOT PASTE THIS VALUE TO ANYONE AS THIS IS YOUR PASSWORD
-```
-
-```ini
-#AFTER
-[${PROFILE}]
-aws_access_key_id = ${ACCESS_KEY_ID}
-aws_secret_access_key = ${SECRET_ACCESS_KEY} #disclaimer: PLEASE DO NOT PASTE THIS VALUE TO ANYONE AS THIS IS YOUR PASSWORD
-[${PROFILE}-temp]
-aws_access_key_id = xxxSOME_NEW_ACCESS_KEY_ID
-aws_secret_access_key = xxxSOME_NEW_SECRET_ACCESS_KEY #disclaimer: PLEASE DO NOT PASTE THIS VALUE TO ANYONE AS THIS IS YOUR PASSWORD
-aws_session_token = xxxSOME_VALUE
-```
-
-After this just run your command such as below to verify it works
-> `AWS_PROFILE=xxx-temp aws s3 ls s3://${YOUR_BUCKET_NAME}`
-
-#### Advanced Method
-
-In order to indicate to AWS to assume certain roles, we'll need to configure it so via the `role_arn` property.
-We also implement a mandatory multi-factor authentication (2FA) for role assumptions that can be specified using the `mfa_serial` property
-
-1. Edit `~/.aws/config` as follows, making the appropriate substitutions:
-    ```ini
-    [profile ${PROFILE}]
-    mfa_serial = ${MFA_SERIAL}
-
-    [profile ${AWS_USER}]
-    source_profile = ${PROFILE}
-    role_arn = ${ROLE_ARN}
-    mfa_serial = ${MFA_SERIAL}
-    ```
->>>>>>> 60cdf818f516c98df6a53e96a0bae19627fa5f22
 
 ## Requirements
 
