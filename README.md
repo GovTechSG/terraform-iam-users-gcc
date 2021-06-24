@@ -67,14 +67,7 @@ You will need the following information to proceed:
 
 1. The secret access key you will receive is base64-encoded and encrypted with your public key. To decrypt it, run `echo ${ENCRYPTED_SECRET_ACCESS_KEY} | base64 -d > ./aws_secret_access_key.enc`
 2. Decrypt the file by running `gpg --decrypt ./aws_secret_access_key.enc > ./aws_secret_access_key`
-3. Create a file at `~/.aws/credentials` if you don't already have it and paste in the following, making the appropriate substitutions:
-    1. ${PROFILE} is a profile name of your choice, e.g my-project-environment
-    2. `${SECRET_ACCESS_KEY}` with the decrypted key from step 2.
-    ```ini
-    [${PROFILE}]
-    aws_access_key_id = ${ACCESS_KEY_ID}
-    aws_secret_access_key = ${SECRET_ACCESS_KEY} #disclaimer: PLEASE DO NOT PASTE THIS VALUE TO ANYONE AS THIS IS YOUR PASSWORD
-    ```
+3. Install [aws-vault](https://github.com/99designs/aws-vault) and run `aws-vault login my-project-my-username`
 
 ### Creating your virtual MFA
 
@@ -99,119 +92,25 @@ Before we assume a role, you'll need to create a virtual MFA via the [AWS CLI to
 
 To access roles you are granted, you'll need to assume an IAM Role. IAM Roles which you can assume are based on the IAM Groups you are in, and the IAM Roles affect your permissions on the various AWS resources.
 
-#### Easier method
+#### Setup ~/.aws/config
 
-Run the below script to create a new profile under `~/.aws/credentials` with the postfix `-temp` of your current `AWS_PROFILE`.
+> see https://github.com/99designs/aws-vault#roles-and-mfa
 
-The following environment variables should be set in your shell environment prior to running the script. To make it easier and not have to retype these variables everytime, consider installing a tool such as [direnv](https://direnv.net/). This is considered easier because there is less configuration required on `~/.aws/config` and `~/.aws/credentials` which is error prone especially for first time users.
+1. Create a file called ~/.aws/config with the following information
 
-| Name            | Description                                                                           |
-| --------------- | ------------------------------------------------------------------------------------- |
-| AWS_PROFILE_CLI | Profile to use, reference from ~/.aws/credentials`                                    |
-| ACCOUNT_ID      | The AWS account id                                                                    |
-| AWS_USERNAME    | Your username as referenced from IAM console, e.g my_name_cli                         |
-| IAM_ROLE        | The role you are trying to assume to get permissions from, e.g developer, great-power |
+```yaml
+[profile my-project-${AWS_USER}]
+mfa_serial=arn:aws:iam::{ACCOUNTID}:mfa/${AWS_USER}
+credential_process=env AWS_SDK_LOAD_CONFIG=0 aws-vault exec my-project-${AWS_USER} --no-session --duration=1h --json
 
-The created `-temp` profile should be used, meaning you run `export AWS_PROFILE=xxx-temp` before running any aws cli commands.
-
-```sh
-#!/bin/bash
-# auth.sh
-
-set -e
-if [ -z "$1" ]; then
-  echo "Need MFA..."
-  exit 1;
-fi
-
-function assrole() {
-  PROFILE_NAME=$1
-  ACCOUNT_ID=$2
-  AWS_USERNAME=$3
-  IAM_ROLE=$4
-  MFA=$5
-
-  if [ -z "$PROFILE_NAME" ]; then
-    echo "Need AWS_PROFILE_CLI shell environment variable"
-    exit 1;
-  fi
-
-  if [ -z "$ACCOUNT_ID" ]; then
-    echo "Need ACCOUNT_ID shell environment variable"
-    exit 1;
-  fi
-
-  if [ -z "$AWS_USERNAME" ]; then
-    echo "Need AWS_USERNAME shell environment variable, which is your '_cli' user, e.g my_name_cli"
-    exit 1;
-  fi
-
-  if [ -z "$IAM_ROLE" ] then
-    echo "Need IAM_ROLE shell environment variable, which is the role name your are trying to assume, e.g developer, great-power"
-    exit 1;
-  fi
-
-
-  AWS_PROFILE=${PROFILE_NAME} aws sts assume-role \
-		--role-arn arn:aws:iam::"${ACCOUNT_ID}":role/"${IAM_ROLE}"\
-		--role-session-name "${AWS_USERNAME}"\
-		--serial-number arn:aws:iam::"${ACCOUNT_ID}":mfa/"${AWS_USERNAME}" \
-		--token-code "${MFA}" > ./cred-"${PROFILE_NAME}" --duration-seconds 3600
-
-  cat ./cred-"${PROFILE_NAME}"
-
-  ACCESS_KEY_ID=$(jq -r '.Credentials.AccessKeyId' ./cred-"${PROFILE_NAME}")
-  SECRET_KEY=$(jq -r '.Credentials.SecretAccessKey' ./cred-"${PROFILE_NAME}")
-  SESSION_TOKEN=$(jq -r '.Credentials.SessionToken' ./cred-"${PROFILE_NAME}")
-
-  aws configure set aws_access_key_id "${ACCESS_KEY_ID}" --profile "${PROFILE_NAME}"-temp
-  aws configure set aws_secret_access_key "${SECRET_KEY}" --profile "${PROFILE_NAME}"-temp
-  aws configure set aws_session_token "${SESSION_TOKEN}" --profile "${PROFILE_NAME}"-temp
-  rm ./cred-"${PROFILE_NAME}"
-}
-
-assrole "${AWS_PROFILE_CLI}" "${ACCOUNT_ID}" "${AWS_USERNAME}" "${IAM_ROLE}" "$1"
-
+[profile my-project-my-role]
+mfa_serial=arn:aws:iam::{ACCOUNTID}:mfa/${AWS_USER}
+role_arn=arn:aws:iam::{ACCOUNTID}}:role/role-to-assume
+source_profile=my-username
 ```
 
-#### Before and after of script and what it does to `~/.aws/credentials`
-
-```ini
-#BEFORE
-[${PROFILE}]
-aws_access_key_id = ${ACCESS_KEY_ID}
-aws_secret_access_key = ${SECRET_ACCESS_KEY} #disclaimer: PLEASE DO NOT PASTE THIS VALUE TO ANYONE AS THIS IS YOUR PASSWORD
-```
-
-```ini
-#AFTER
-[${PROFILE}]
-aws_access_key_id = ${ACCESS_KEY_ID}
-aws_secret_access_key = ${SECRET_ACCESS_KEY} #disclaimer: PLEASE DO NOT PASTE THIS VALUE TO ANYONE AS THIS IS YOUR PASSWORD
-[${PROFILE}-temp]
-aws_access_key_id = xxxSOME_NEW_ACCESS_KEY_ID
-aws_secret_access_key = xxxSOME_NEW_SECRET_ACCESS_KEY #disclaimer: PLEASE DO NOT PASTE THIS VALUE TO ANYONE AS THIS IS YOUR PASSWORD
-aws_session_token = xxxSOME_VALUE
-```
-
-After this just run your command such as below to verify it works
-> `AWS_PROFILE=xxx-temp aws s3 ls`
-
-#### Advanced Method
-
-In order to indicate to AWS to assume certain roles, we'll need to configure it so via the `role_arn` property.
-We also implement a mandatory multi-factor authentication (2FA) for role assumptions that can be specified using the `mfa_serial` property
-
-1. Edit `~/.aws/config` as follows, making the appropriate substitutions:
-    ```ini
-    [profile ${PROFILE}]
-    mfa_serial = ${MFA_SERIAL}
-
-    [profile ${AWS_USER}]
-    source_profile = ${PROFILE}
-    role_arn = ${ROLE_ARN}
-    mfa_serial = ${MFA_SERIAL}
-    ```
+2. run `aws-vault exec my-role` and type in your 2fa when requested
+3. Check that you have assumed the role correctly by testing `aws` commands that is allowed with your role.
 
 ## Requirements
 
