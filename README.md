@@ -67,7 +67,18 @@ You will need the following information to proceed:
 
 1. The secret access key you will receive is base64-encoded and encrypted with your public key. To decrypt it, run `echo ${ENCRYPTED_SECRET_ACCESS_KEY} | base64 -d > ./aws_secret_access_key.enc`
 2. Decrypt the file by running `gpg --decrypt ./aws_secret_access_key.enc > ./aws_secret_access_key`
-3. Install [aws-vault](https://github.com/99designs/aws-vault) and run `aws-vault login my-project-my-username`
+3. Install [aws-vault](https://github.com/99designs/aws-vault) and run `aws-vault add my-project-my-username`
+
+### Setup ~/.aws/config
+
+> see https://github.com/99designs/aws-vault#roles-and-mfa
+
+1. Create a file called ~/.aws/config with the following information
+
+```yaml
+[profile my-project-${AWS_USER}]
+credential_process=env AWS_SDK_LOAD_CONFIG=0 aws-vault exec my-project-${AWS_USER} --no-session --duration=1h --json
+```
 
 ### Creating your virtual MFA
 
@@ -92,11 +103,6 @@ Before we assume a role, you'll need to create a virtual MFA via the [AWS CLI to
 
 To access roles you are granted, you'll need to assume an IAM Role. IAM Roles which you can assume are based on the IAM Groups you are in, and the IAM Roles affect your permissions on the various AWS resources.
 
-#### Setup ~/.aws/config
-
-> see https://github.com/99designs/aws-vault#roles-and-mfa
-
-1. Create a file called ~/.aws/config with the following information
 
 ```yaml
 [profile my-project-${AWS_USER}]
