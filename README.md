@@ -90,14 +90,22 @@ Before we assume a role, you'll need to create a virtual MFA via the [AWS CLI to
     ```sh
     aws iam create-virtual-mfa-device --virtual-mfa-device-name ${AWS_USER} --outfile ~/mfa_${AWS_USER}.png --bootstrap-method QRCodePNG;
     ```
+   A JSON response will be shown - note down the `MFA_SERIAL` returned. You will need this later.
 4. Open the file at `~/mfa_${AWS_USER}.png` and scan it with your authenticator application, note two consecutive codes it generates.
 5. Run the following in your terminal to enable the virtual MFA (replace `000000` and `111111` with the two generated codes):
     ```sh
     aws iam enable-mfa-device --user-name ${AWS_USER} --serial-number ${MFA_SERIAL} --authentication-code1 000000 --authentication-code2 111111
     ```
+6. Your MFA set up is done!
+
+   Add the MFA into your ~/.aws/config:
+   ```yaml
+   [profile my-project-my-username]
+   mfa_serial=arn:aws:iam::123456789012:mfa/my-username # Add this line
+   credential_process=env AWS_SDK_LOAD_CONFIG=0 aws-vault exec my-project-my-username --no-session --duration=1h --json
+   ```
 
 *Note* `MFA_SERIAL` is arn:aws:iam::${ACCOUNT_ID}:mfa/${AWS_USER}
-
 
 ### Configuring AWS cli to assume roles
 
@@ -118,6 +126,23 @@ source_profile=my-project-my-username
 
 2. run `aws-vault exec my-project-my-role` and type in your 2fa when requested
 3. Check that you have assumed the role correctly by testing `aws` commands that is allowed with your role.
+
+### Troubleshooting
+
+#### `ExpiredToken` errors
+
+If during the MFA creation process, you get the following error:
+```
+An error occurred (ExpiredToken) when calling the CreateVirtualMFADevice operation: The security token included in the request is expired
+```
+
+There might be an issue with your `aws-vault` setup - try using a **new, unpolluted terminal session**, and define your AWS access key and secret as environment vars:
+```sh
+export AWS_ACCESS_KEY_ID=XXXXXXXXXXX
+export AWS_SECRET_ACCESS_KEY=XXXXXXXXXXXXXX
+```
+
+And try the command again.
 
 ## Requirements
 
