@@ -67,7 +67,14 @@ You will need the following information to proceed:
 
 1. The secret access key you will receive is base64-encoded and encrypted with your public key. To decrypt it, run `echo ${ENCRYPTED_SECRET_ACCESS_KEY} | base64 -d > ./aws_secret_access_key.enc`
 2. Decrypt the file by running `gpg --decrypt ./aws_secret_access_key.enc > ./aws_secret_access_key`
-3. Install [aws-vault](https://github.com/99designs/aws-vault) and run `aws-vault add my-project-my-username`. You'll be prompted to for your AWS Access Key ID and also your AWS Secret Access Key.
+3. Install [aws-vault](https://github.com/99designs/aws-vault).
+4. In an **new, unpolluted terminal session**, define your AWS access key and secret as environment vars:
+    ```sh
+    export AWS_ACCESS_KEY_ID=${ACCESS_KEY_ID}
+    export AWS_SECRET_ACCESS_KEY=XXXXXXXXXXXXXX
+    ```
+5. Run `aws sts get-caller-identity`. You should get a json response if successful. This means your credentials declared in env var are correct and working.
+6. Run `aws-vault add my-project-my-username --env` to save these credentials into the profile.
 
 ### Setup ~/.aws/config
 
@@ -128,6 +135,18 @@ source_profile=my-project-my-username
 3. Check that you have assumed the role correctly by testing `aws` commands that is allowed with your role.
 
 ### Troubleshooting
+
+#### `SignatureDoesNotMatch` errors
+
+This error occurs when the secret key provided to `aws-vault` was corrupted in the `aws-vault add` process.
+This might be due to the shell interferring with the secret key value (which might have escape characters).
+
+```
+An error occurred (SignatureDoesNotMatch) when calling the CreateVirtualMFADevice operation: The request signature we calculated does not match the signature you provided.
+```
+
+1. Remove the existing, invalid credentials - `aws-vault remove my-project-my-username`
+2. Follow the guide above to add the credentials via environment variables instead.
 
 #### `ExpiredToken` errors
 
