@@ -9,7 +9,7 @@ module 'iam-user-gcc' {
   name = "My Name"
 
   # official work email
-  mail = "my_email@tech.gov.sg"
+  mail = "your work email"
 
   # create with `gpg --full-generate-key`, list with `gpg --list-secret-keys --keyid-format LONG` and get with `gpg --export %KEY_ID% | base64 -w 0`
   pgp_key = "mQINBF6qL/IdKGMQawxsCwUvm3Y4yjhC+WzAP7U7o48IMv0Zi0ichuvtTMJwsTLc6ym4fuBrYquzlu92PvDHb2EZKJNA9kW8t4mNQsVFtU6HQfpnnABSVed+eFBEQjBl89Jj9TlYBRBVqH0QYtPyUmrJcWxfbD7N3yQUPtJ8TLFSda+E/vG146a08eZsoKxMzb3dDCLf7nJ+epwmvIdspiI+/+fNNn7jqJC9RksL8OXrV9w+qN3u7Budxni/ZIecaenBFAs9IRn+4rfplvVlPyXLlb6w=="
