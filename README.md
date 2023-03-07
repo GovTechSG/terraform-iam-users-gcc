@@ -9,7 +9,7 @@ module 'iam-user-gcc' {
   name = "My Name"
 
   # official work email
-  mail = "your work email"
+  mail = "someone@tech.gov.sg"
 
   # create with `gpg --full-generate-key`, list with `gpg --list-secret-keys --keyid-format LONG` and get with `gpg --export %KEY_ID% | base64 -w 0`
   pgp_key = "mQINBF6qL/IdKGMQawxsCwUvm3Y4yjhC+WzAP7U7o48IMv0Zi0ichuvtTMJwsTLc6ym4fuBrYquzlu92PvDHb2EZKJNA9kW8t4mNQsVFtU6HQfpnnABSVed+eFBEQjBl89Jj9TlYBRBVqH0QYtPyUmrJcWxfbD7N3yQUPtJ8TLFSda+E/vG146a08eZsoKxMzb3dDCLf7nJ+epwmvIdspiI+/+fNNn7jqJC9RksL8OXrV9w+qN3u7Budxni/ZIecaenBFAs9IRn+4rfplvVlPyXLlb6w=="
@@ -47,7 +47,7 @@ Expected output: **Base64-encoded, non-ASCII-armored GPG public key**
     5. Enter your **official work email address** when asked for it
     6. Enter in a comment if you want
     7. Verify the **USER-ID** reflected back to you is correct (
-       eg. `"joseph_testing_20200427 (no comments)  <your work email>"`)
+       eg. `"someone (no comments)  <someone@tech.gov.sg>"`)
     8. Use **O** to indicate okay
     9. Enter in a key password and enter it in again to verify it
     10. Generate the random bytes the `gpg` program needs by surfing the web (if needed)
@@ -83,9 +83,18 @@ You will need the following information to proceed:
 
 1. Create a file called ~/.aws/config with the following information
 
+If you are using, aws-vault 6.6.x
+
 ```yaml
 [ profile my-project-my-username ]
   credential_process=env AWS_SDK_LOAD_CONFIG=0 aws-vault exec my-project-my-username --no-session --duration=1h --json
+```
+
+If you are using, aws-vault 7.x.x
+
+```yaml
+[ profile my-project-my-username ]
+  aws-vault exec my-project-my-username --no-session --duration=1h --json
 ```
 
 ### Creating your virtual MFA
@@ -206,14 +215,14 @@ No requirements.
 
 ## Inputs
 
-| Name        | Description                                                               | Type                           | Default              | Required |
-|-------------|---------------------------------------------------------------------------|--------------------------------|----------------------|:--------:|
-| aws\_region | aws region                                                                | `string`                       | n/a                  |   yes    |
-| email       | official work email of the user                                           | `string`                       | `"Your work email"`  |    no    |
-| name        | real name of the user                                                     | `string`                       | `"Monica Zheng"`     |    no    |
-| pgp\_key    | pgp key to use to encrypt the access keys - use 'gpg --export %KEY\_ID% \ | base64 -w 0' to get this value | `string`             |   n/a    |   yes    |
-| purpose     | a reason why this user should exist                                       | `string`                       | n/a                  |   yes    |
-| username    | username for the user                                                     | `string`                       | `"gcc-default-user"` |    no    |
+| Name        | Description                                                               | Type                           | Default                 | Required |
+|-------------|---------------------------------------------------------------------------|--------------------------------|-------------------------|:--------:|
+| aws\_region | aws region                                                                | `string`                       | n/a                     |   yes    |
+| email       | official work email of the user                                           | `string`                       | `"someone@tech.gov.sg"` |    no    |
+| name        | real name of the user                                                     | `string`                       | `"Monica Zheng"`        |    no    |
+| pgp\_key    | pgp key to use to encrypt the access keys - use 'gpg --export %KEY\_ID% \ | base64 -w 0' to get this value | `string`                |   n/a    |   yes    |
+| purpose     | a reason why this user should exist                                       | `string`                       | n/a                     |   yes    |
+| username    | username for the user                                                     | `string`                       | `"gcc-default-user"`    |    no    |
 
 ## Outputs
 
