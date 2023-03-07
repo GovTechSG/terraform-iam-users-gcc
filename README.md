@@ -206,14 +206,14 @@ No requirements.
 
 ## Inputs
 
-| Name        | Description                                                               | Type                           | Default                 | Required |
-|-------------|---------------------------------------------------------------------------|--------------------------------|-------------------------|:--------:|
-| aws\_region | aws region                                                                | `string`                       | n/a                     |   yes    |
-| email       | official work email of the user                                           | `string`                       | `"someone@tech.gov.sg"` |    no    |
-| name        | real name of the user                                                     | `string`                       | `"Monica Zheng"`        |    no    |
-| pgp\_key    | pgp key to use to encrypt the access keys - use 'gpg --export %KEY\_ID% \ | base64 -w 0' to get this value | `string`                |   n/a    |   yes    |
-| purpose     | a reason why this user should exist                                       | `string`                       | n/a                     |   yes    |
-| username    | username for the user                                                     | `string`                       | `"gcc-default-user"`    |    no    |
+| Name        | Description                                                               | Type                           | Default              | Required |
+|-------------|---------------------------------------------------------------------------|--------------------------------|----------------------|:--------:|
+| aws\_region | aws region                                                                | `string`                       | n/a                  |   yes    |
+| email       | official work email of the user                                           | `string`                       | `"Your work email"`  |    no    |
+| name        | real name of the user                                                     | `string`                       | `"Monica Zheng"`     |    no    |
+| pgp\_key    | pgp key to use to encrypt the access keys - use 'gpg --export %KEY\_ID% \ | base64 -w 0' to get this value | `string`             |   n/a    |   yes    |
+| purpose     | a reason why this user should exist                                       | `string`                       | n/a                  |   yes    |
+| username    | username for the user                                                     | `string`                       | `"gcc-default-user"` |    no    |
 
 ## Outputs
 
