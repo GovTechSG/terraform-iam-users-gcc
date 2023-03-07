@@ -47,7 +47,7 @@ Expected output: **Base64-encoded, non-ASCII-armored GPG public key**
     5. Enter your **official work email address** when asked for it
     6. Enter in a comment if you want
     7. Verify the **USER-ID** reflected back to you is correct (
-       eg. `"joseph_testing_20200427 (no comments)  <joseph_testing_20200427@gmail.com>"`)
+       eg. `"joseph_testing_20200427 (no comments)  <your work email>"`)
     8. Use **O** to indicate okay
     9. Enter in a key password and enter it in again to verify it
     10. Generate the random bytes the `gpg` program needs by surfing the web (if needed)
