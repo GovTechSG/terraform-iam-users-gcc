@@ -90,6 +90,13 @@ If you are using, aws-vault 6.6.x
   credential_process=env AWS_SDK_LOAD_CONFIG=0 aws-vault exec my-project-my-username --no-session --duration=1h --json
 ```
 
+If you are using, aws-vault 7.x.x and using terraform EKS module, you will need the following to allow assuming of eks admin role
+
+```yaml
+[ profile my-project-my-username ]
+  credential_process=env aws-vault exec my-project-my-username --no-session --duration=1h --json
+```
+
 If you are using, aws-vault 7.x.x
 
 ```yaml
@@ -126,6 +133,13 @@ not require MFA, you may skip this step.
    mfa_serial=arn:aws:iam::123456789012:mfa/my-username # Add this line
    credential_process=env AWS_SDK_LOAD_CONFIG=0 aws-vault exec my-project-my-username --no-session --duration=1h --json
    ```
+   If you are using, aws-vault 7.x.x and using terraform EKS module, you will need the following to allow assuming of eks admin role
+   ```yaml
+   [profile my-project-my-username]
+   mfa_serial=arn:aws:iam::123456789012:mfa/my-username # Add this line
+   credential_process=env aws-vault exec my-project-my-username --no-session --duration=1h --json
+   ```
+
    If you are using, aws-vault 7.x.x
    ```yaml
    [profile my-project-my-username]
@@ -150,6 +164,19 @@ If you are using, aws-vault 6.6.x
   credential_process=env AWS_SDK_LOAD_CONFIG=0 aws-vault exec my-project-my-username --no-session --duration=1h --json
 
   [ profile my-project-my-role ]
+  mfa_serial=arn:aws:iam::123456789012:mfa/my-username
+  role_arn=arn:aws:iam::{ACCOUNTID}:role/role-to-assume
+  source_profile=my-project-my-username
+```
+
+If you are using, aws-vault 7.x.x and using terraform EKS module, you will need the following to allow assuming of eks admin role
+
+```yaml
+[ profile my-project-my-username ]
+  mfa_serial=arn:aws:iam::123456789012:mfa/my-username
+  credential_process=env aws-vault exec my-project-my-username --no-session --duration=1h --json
+
+  [ profile eks-admin-role ]
   mfa_serial=arn:aws:iam::123456789012:mfa/my-username
   role_arn=arn:aws:iam::{ACCOUNTID}:role/role-to-assume
   source_profile=my-project-my-username
